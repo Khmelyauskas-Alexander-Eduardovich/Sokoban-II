@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import "ThemeManager.js" as Theme
 
 Page {
-    id: settingsPage
     background: Rectangle { color: "transparent" }
 
     header: ToolBar {
@@ -15,126 +14,143 @@ Page {
             flat: true
             contentItem: Text {
                 text: backward_Button_I.text
-                color: Theme.getTextColor()
+                color: Theme.getTextColor();
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                font.bold: true
+                elide: Text.ElideRight
             }
         }
     }
 
-    ScrollView {
-        anchors.fill: parent
-        contentWidth: parent.width
-        clip: true
+    Column {
+        anchors.centerIn: parent
+        spacing: 20
 
-        Column {
-            width: parent.width * 0.8
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 25
-            topPadding: 20
+        Label {
+            text: qsTr("Settings")
+            font.pixelSize: 28; font.bold: true
+            color: Theme.getTextColor()
+        }
 
-            Label {
-                text: qsTr("Settings")
-                font.pixelSize: 32; font.bold: true
-                color: Theme.getTextColor()
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            // --- Блок Темы ---
-            Column {
-                width: parent.width
-                spacing: 10
-                Label {
-                    text: qsTr("Interface Theme:")
-                    color: Theme.getTextColor()
-                    font.pixelSize: 18
+        Row {
+            spacing: 10
+            Label { text: qsTr("Theme:"); anchors.verticalCenter: parent.verticalCenter; color: Theme.getTextColor() }
+            ComboBox {
+                model: ["classicos", "terminal", "dos", "au_console", "tron"]
+                currentIndex: model.indexOf(window.activeTheme)
+                onActivated: {
+                    var themeKey = model[index]; // Берем ключ темы
+                    window.activeTheme = themeKey;
+                    Theme.setTheme(themeKey);
+                    dbManager.saveTheme(themeKey); // Сохраняем в SQLite
+                    console.log("Theme saved: " + themeKey);
                 }
-                ComboBox {
-                    width: parent.width
-                    model: ["classicos", "terminal", "dos", "au_console", "tron", "green_pitch", "UBports Mania"]
-                    currentIndex: model.indexOf(window.activeTheme)
-                    onActivated: {
-                        window.activeTheme = model[index];
-                        // Нам не нужно вызывать dbManager.saveAllSettings(),
-                        // потому что в main.qml стоит onActiveThemeChanged: dbManager.saveAllSettings()
+            }
+        }
+                    Label {
+                        text: qsTr("Visuals")
+                        font.pixelSize: 22; font.bold: true
+                        color: Theme.getTextColor()
+                    }
+
+                    Rectangle {
+                        width: parent.width; height: 20
+                        color: "transparent"
+                        radius: 2
+                        border.color: "transparent" //window.activeTheme === "tron" ? "#00FFFF" : "transparent"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 15
+                            spacing: 20
+
+                            Label {
+                                text: qsTr("Menu Background Animation")
+                                anchors.verticalCenter: parent.verticalCenter
+                                font.pixelSize: 16
+                                color: Theme.getTextColor()
+                            }
+
+                            Switch {
+                                id: animSwitch
+                                anchors.verticalCenter: parent.verticalCenter
+                                // Привязываем к нашей переменной из main.qml
+                                checked: window.showMenuAnimation
+
+                                onToggled: {
+                                    window.showMenuAnimation = checked
+                                    // Вызываем сохранение в базу, которое мы прописали в main.qml
+                                    if (typeof window.saveSettings === "function") {
+                                        window.saveSettings()
+                                    }
+                                    console.log("Animation is now: " + (checked ? "ON" : "OFF"))
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        width: parent.width
+                        height: 20
+                        color: "transparent"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 15
+                            spacing: 20
+
+                            Label {
+                                text: qsTr("Log text (Desktop)")
+                                anchors.verticalCenter: parent.verticalCenter
+                                font.pixelSize: 16
+                                color: Theme.getTextColor()
+                            }
+
+                            Switch {
+                                id: logText_switch
+                                anchors.verticalCenter: parent.verticalCenter
+                                // Привязываем к нашей переменной из main.qml
+                                checked: window.showLog
+
+                                onToggled: {
+                                    window.showLog = checked
+                                    dbManager.saveSettings() // Вызываем через dbManager!
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        width: parent.width
+                        height: 20
+                        color: "transparent"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 15
+                            spacing: 20
+
+                            Label {
+                                text: qsTr("Fullscreen Mode")
+                                anchors.verticalCenter: parent.verticalCenter
+                                font.pixelSize: 16
+                                color: Theme.getTextColor()
+                            }
+
+                            Switch {
+                                id: fullscreen_switch
+                                anchors.verticalCenter: parent.verticalCenter
+                                // Привязываем к нашей переменной из main.qml
+                                checked: window.fullscreenMode
+
+                                onToggled: {
+                                    window.fullscreenMode = checked
+                                    // Вызываем сохранение в базу, которое мы прописали в main.qml
+                                    if (typeof window.saveSettings === "function") {
+                                        window.saveSettings()
+                                    }
+                                    window.fullscreenMode = checked
+                                }
+                            }
+                        }
                     }
                 }
-            }
-
-            // --- Блок Визуалов ---
-            Label {
-                text: qsTr("Visuals")
-                font.pixelSize: 24; font.bold: true
-                color: Theme.getTextColor()
-            }
-
-            // Настройка анимации
-            Row {
-                width: parent.width
-                spacing: 20
-                Label {
-                    text: qsTr("Menu Animation")
-                    font.pixelSize: 18
-                    color: Theme.getTextColor()
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - swAnim.width - 20
-                }
-                Switch {
-                    id: swAnim
-                    checked: window.showMenuAnimation
-                    onToggled: window.showMenuAnimation = checked
-                }
-            }
-
-            // Настройка лога
-            Row {
-                width: parent.width
-                spacing: 20
-                Label {
-                    text: qsTr("Show Log (Debug)")
-                    font.pixelSize: 18
-                    color: Theme.getTextColor()
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - swLog.width - 20
-                }
-                Switch {
-                    id: swLog
-                    checked: window.showLog
-                    onToggled: window.showLog = checked
-                }
-            }
-
-            // Полноэкранный режим
-            Row {
-                width: parent.width
-                spacing: 20
-                Label {
-                    text: qsTr("Fullscreen Mode")
-                    font.pixelSize: 18
-                    color: Theme.getTextColor()
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - swFull.width - 20
-                }
-                Switch {
-                    id: swFull
-                    checked: window.fullscreenMode
-                    onToggled: window.fullscreenMode = checked
-                }
-            }
-            Row {
-                spacing: 20
-                Label {
-                    text: qsTr("Show Radar")
-                    font.pixelSize: 18
-                    color: Theme.getTextColor()
-                }
-                Switch {
-                    id: radarSwitch
-                    checked: window.showRadar
-                    onCheckedChanged: window.showRadar = checked
-                }
-            }
-        }
     }
-}

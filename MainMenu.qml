@@ -65,30 +65,18 @@ Page {
         }
     }
 
-    Item {
-        id: element
-        anchors.fill: parent
+    Column {
+        anchors.centerIn: parent
+        spacing: 15
         Text {
-            id: title
-            text: qsTr("SOKOBAN II")
-            anchors.top: parent.top
-            anchors.topMargin: 200
+            text: qsTr("SOKOBAN II") // Не забыл про qsTr!
             font.pixelSize: 42; font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
-            color: {
-                    window.activeTheme; // Эта строчка заставляет QML следить за изменениями
-                    return Theme.getTextColor();
-            }
+            // Привязываемся к свойству окна, чтобы цвет обновился мгновенно
+            color: window.activeTheme ? Theme.getTextColor() : "#32CD32"
         }
-        Column {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: title.bottom
-            anchors.topMargin: 20
-            spacing: 10
-
         Button { text: qsTr("Play"); width: 200; onClicked: mainStack.push("PreGameMenu.qml") }
         Button { text: qsTr("Settings"); width: 200; onClicked: mainStack.push("SettingsPage.qml") }
         Button { text: qsTr("Quit!"); width: 200; onClicked: Qt.quit() }
-        }
     }
 }
