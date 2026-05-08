@@ -1,80 +1,119 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import "LevelData.js" as LevelData
 import "ThemeManager.js" as Theme
+import "LevelData.js" as LevelData
 
 Page {
+    id: packSelector
     background: Rectangle { color: "transparent" }
+
     header: ToolBar {
         background: Rectangle { color: "transparent" }
-        Button {id: menuButton_I; text: qsTr("← Menu"); onClicked: mainStack.pop(); contentItem: Text {text: menuButton_I.text; color: Theme.getTextColor(); horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight} background: Rectangle {color: "transparent"; border.width: 1; border.color: Theme.getTextColor()} }
+        Button {
+            text: qsTr("← Back")
+            onClicked: mainStack.pop()
+            flat: true
+            contentItem: Text {
+                text: parent.text
+                color: Theme.getTextColor()
+                font.bold: true
+            }
+        }
     }
 
-    GridView {
-            id: packsGrid
-            anchors.fill: parent
-            anchors.margins: 20
-            cellWidth: 220
-            cellHeight: 160
+    Column {
+        anchors.fill: parent
+        anchors.margins: 20
+        spacing: 15
 
-            // ВАЖНО: используем LevelData.collections напрямую
+        Label {
+            text: qsTr("Select Level Pack")
+            font.pixelSize: 28; font.bold: true
+            color: Theme.getTextColor()
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        ListView {
+            id: packList
+            width: parent.width
+            height: parent.height - 60
             model: LevelData.collections
+            spacing: 10
+            clip: true
 
-            delegate: Button {
-                width: 200
-                height: 140
-
-                contentItem: Column {
-                    spacing: 5
-                    anchors.centerIn: parent
-                    Text {
-                        text: modelData.name
-                        font.bold: true
-                        color: Theme.getTextColor() //window.activeTheme === "tron" ? "#00FFFF" : "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        width: 180
-                        wrapMode: Text.WordWrap
-                    }
-                    Text {
-                        text: modelData.count + " " + qsTr("Levels")
-                        color: Theme.getTextColor() //window.activeTheme === "tron" ? "#00FFFF" : "gray"
-                        horizontalAlignment: Text.AlignHCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
+            delegate: ItemDelegate {
+                width: packList.width
+                height: 100
 
                 background: Rectangle {
-                    color: parent.down ? "#3300FFFF" : "transparent"
-                    border.color: Theme.getTextColor() //window.activeTheme === "tron" ? "#00FFFF" : "#CCC"
-                    border.width: 2
+                    color: window.activeTheme === "green_pitch" || window.activeTheme === "terminal" ? "#111" : "#eee"
                     radius: 10
+                    border.color: highlighted ? Theme.getTextColor() : "transparent"
+                    border.width: 2
+                    opacity: hovered ? 0.9 : 0.7
+                }
+
+                contentItem: Row {
+                    spacing: 15
+                    anchors.fill: parent
+                    anchors.margins: 10
+
+                    // Иконка или просто порядковый номер
+                    Rectangle {
+                        width: 50; height: 50
+                        radius: 25
+                        color: Theme.getTextColor()
+                        opacity: 0.2
+                        anchors.verticalCenter: parent.verticalCenter
+                        clip: true
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData.name[0] // Первая буква названия
+                            color: Theme.getTextColor()
+                            font.bold: true
+                        }
+                        /*Image {
+                            id: icon_of_pack
+                            source: modelData.icon
+                            anchors.fill: parent
+                        }*/
+                    }
+
+                    Column {
+                        width: parent.width - 70
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Label {
+                            text: modelData.name
+                            font.pixelSize: 18; font.bold: true
+                            color: Theme.getTextColor()
+                            elide: Text.ElideRight
+                            width: parent.width
+                        }
+                        Label {
+                            text: modelData.author
+                            font.pixelSize: 15; font.bold: false
+                            font.italic: true
+                            color: Theme.getTextColor()
+                            elide: Text.ElideRight
+                            width: parent.width
+                        }
+                        Label {
+                            text: modelData.description + " (" + (modelData.count || "??") + " levels)"
+                            font.pixelSize: 13
+                            color: Theme.getTextColor()
+                            opacity: 0.7
+                        }
+                    }
                 }
 
                 onClicked: {
-                    console.log("Attempting to load pack: " + modelData.file);
-
-                    // 1. Сначала пытаемся загрузить сам JS файл с уровнями
-                    if (LevelData.loadPack(modelData.file)) {
-                        // Устанавливаем имя текущего пака для БД
-                        window.currentPackName = modelData.file;
-
-                        // 2. Узнаем, какой уровень последний пройденный
-                        // Используем функцию, которую мы добавили в dbManager
-                        var savedIdx = dbManager.getSavedLevelForPack(window.currentPackName);
-
-                        // Устанавливаем индекс (либо сохраненный, либо 0, если пак новый)
-                        window.currentLevelIdx = savedIdx;
-
-                        console.log("Progress found! Starting from level: " + window.currentLevelIdx);
-
-                        // 3. Грузим именно этот уровень и летим в игру
-                        engine.loadLevel(window.currentLevelIdx, false);
-                        mainStack.push("GameView.qml");
-
-                    } else {
-                        console.log("F*ck! Still not loading " + modelData.file);
-                    }
+                    // ГЛАВНЫЙ ФИКС: Вызываем новую умную функцию из main.qml
+                    dbManager.loadPackAndLevel(modelData.file);
+                    mainStack.push("GameView.qml");
+                    console.log("SUCCESS: Switching to pack " + modelData.file);
                 }
             }
         }
+    }
 }

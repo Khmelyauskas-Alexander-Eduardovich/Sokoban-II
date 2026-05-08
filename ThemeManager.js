@@ -19,6 +19,7 @@ var themes = {
         name: "Old DOS",
         path: "Assets/Old DOS/",
         isSmooth: "false",
+        background: "#21f0ff",
         textColor: "#FFFFFF",
         accentColor: "#AAAAAA"
     },
@@ -39,6 +40,16 @@ var themes = {
         "textColor": "#00FFFF", // Циан
         "accentColor": "#008B8B"
     },
+    "green_pitch": {
+        "name": "Matrix / Green Pitch",
+        "background": "#000000",
+        "accent": "#00ff00",
+        "path": "Assets/Pitch Matrix (Green Pitch)/",
+        "isSmooth": "false",
+        "textColor": "#00ff00",
+        "accentColor": "#00b400"
+    },
+
     /*"Ubuntu Xenzia": {
         "name": "Ubuntu Xenzia",
         "background": "#333333",
@@ -49,15 +60,14 @@ var themes = {
     }*/
     //Fucking Canonical, I hate Britishs
 
-    /*"UBports Mania": {
+    "UBports Mania": {
         "name": "UBports Mania",
-        "background": "#111111",
-        "accent": "#e964763",
+        "background": "#762572",
+        "accentColor": "#e964763",
         "isSmooth": "true",
-        "textColor": "#",
+        "textColor": "#e964763",
         "path": "Assets/UBports Mania/"
-    }*/
-
+    }
 };
 
 // Используем текущий ключ темы

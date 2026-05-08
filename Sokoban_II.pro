@@ -1,16 +1,24 @@
-QT += quick
+QT += quick qml sql core gui quickcontrols2
 
 CONFIG += c++11
 SOURCES += main.cpp
 
-# Если ты используешь INSTALLS для QML и JS, убери qml.qrc из RESOURCES, 
-# либо оставь только те файлы, которые реально зашиты. 
+# Если ты используешь INSTALLS для QML и JS, убери qml.qrc из RESOURCES,
+# либо оставь только те файлы, которые реально зашиты.
 # Но для UT надежнее работать через файловую систему.
-RESOURCES += qml.qrc 
+RESOURCES += qml.qrc
 
 # --- Распространяемые файлы (DISTFILES) ---
 # Сюда пишем всё, что Qt Creator должен "видеть" в дереве проекта
 DISTFILES += \
+    Assets/Interesting Terminal/player_on_goal.svg \
+    android/AndroidManifest.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew \
+    android/gradlew.bat \
+    android/res/values/libs.xml \
     manifest.json \
     sokoban2.desktop \
     sokoban2.apparmor \
@@ -22,7 +30,7 @@ DISTFILES += \
 # --- ПРАВИЛА УСТАНОВКИ (INSTALLS) ---
 # Clickable берет файлы из этих путей для создания .click пакета
 
-target.path = /lib
+target.path = /
 INSTALLS += target
 
 # Манифест, Desktop-файл и Apparmor в корень
@@ -58,12 +66,14 @@ translations.files = translations/*.qm
 INSTALLS += translations
 
 TRANSLATIONS += \
-    translations/ru.ts \
-    translations/tg.ts \
-    translations/nl.ts \
-    translations/ar.ts \
-    translations/ca.ts \
-    translations/eu.ts \
-    translations/ja.ts \
-    translations/es.ts \
-    translations/en.ts
+    translations/base_ru.ts \
+    translations/base_tg.ts \
+    translations/base_nl.ts \
+    translations/base_ar.ts \
+    translations/base_ca.ts \
+    translations/base_eu.ts \
+    translations/base_ja.ts \
+    translations/base_es.ts \
+    translations/base_en.ts
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

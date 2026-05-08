@@ -14,7 +14,7 @@ function loadLevel(data) {
 
 function tryMove(lvlMap, x, y, dx, dy) {
     // lvlMap вместо map
-    var newMap = JSON.parse(JSON.stringify(lvlMap));
+    var newMap = lvlMap.slice();
     var nX = x + dx;
     var nY = y + dy;
 
@@ -44,7 +44,7 @@ function tryMove(lvlMap, x, y, dx, dy) {
     // Логика игрока (обновляем target, так как он мог измениться ящиком)
     var finalTarget = newMap[nY][nX];
     var pOldRow = newMap[y].split("");
-    pOldRow[x] = (newMap[y][x] === "+" || newMap[y][x] === ".") ? "." : " ";
+    pOldRow[x] = (lvlMap[y][x] === "+" || lvlMap[y][x] === ".") ? "." : " ";
     newMap[y] = pOldRow.join("");
 
     var pNewRow = newMap[nY].split("");

@@ -1,11 +1,7 @@
 [Desktop Entry]
 Name=Sokoban II
 Name[ru]=Сокобан II
-Name[ca]=Socoban II
-Name[eu]=Sokobana II
-Name[nl]=Sokobantje II
-Name[tl]=Sakuban II
-Exec=%U Sokoban_II
+Exec=%U Sokoban2
 Icon=Assets/Icon.svg
 X-Lomiri-Splash-Image=Assets/Splash.svg
 X-Lomiri-Departament-ID=games

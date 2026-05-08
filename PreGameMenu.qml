@@ -1,35 +1,62 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import "ThemeManager.js" as Theme
 
 Page {
-    background: Rectangle { color: window.color }
+    id: preGameMenu
+    background: Rectangle { color: "transparent" }
 
     Column {
         anchors.centerIn: parent
-        spacing: 20
+        spacing: 30
 
+        Label {
+            text: qsTr("Continue Adventure?")
+            font.pixelSize: 32; font.bold: true
+            color: Theme.getTextColor()
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        // Кнопка продолжения (последний пак и уровень уже подтянуты в main.qml)
         Button {
-            text: "CONTINUE"
+            id: continueBtn
+            text: qsTr("CONTINUE")
             width: 250; height: 60
+            anchors.horizontalCenter: parent.horizontalCenter
+
             onClicked: {
-                // Тут в будущем прикрутим загрузку последнего пака/уровня
-                mainStack.push("PackSelector.qml")
+                // В main.qml при старте уже отработал boot(),
+                // так что индекс и пак уже стоят правильные.
+                // Просто заходим в игру!
+                mainStack.push("GameView.qml")
             }
         }
 
         Button {
-            text: "NEW GAME"
+            text: qsTr("SELECT PACK")
             width: 250; height: 60
-            onClicked: {
-                window.currentLevelIdx = 0
-                mainStack.push("PackSelector.qml")
-            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: mainStack.push("PackSelector.qml")
         }
 
         Button {
-            text: "BACK"
-            flat: true
+            text: qsTr("MAIN MENU")
+            width: 250; height: 60
+            anchors.horizontalCenter: parent.horizontalCenter
             onClicked: mainStack.pop()
         }
+    }
+
+    // Небольшая подсказка снизу, что именно мы продолжаем
+    Label {
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.margins: 20
+        text: qsTr("Current Pack: %1 (Level %2)")
+                .arg(window.currentPackName.replace(".js", "").replace("levels_", ""))
+                .arg(window.currentLevelIdx + 1)
+        color: Theme.getTextColor()
+        opacity: 0.6
+        font.pixelSize: 14
     }
 }
