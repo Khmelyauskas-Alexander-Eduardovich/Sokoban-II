@@ -1,0 +1,15 @@
+{
+    "name": "sokoban2.jwb-tutantxamon",
+    "description": "Reincarnation of Classic Sokoban into Revived Part, and it's Sokoban II!",
+    "architecture": "armhf",
+    "title": "Sokoban II",
+    "hooks": {
+        "sokoban-classic": {
+            "apparmor": "sokoban2.apparmor",
+            "desktop": "sokoban2.desktop"
+        }
+    },
+    "version": "1.2.0",
+    "maintainer": "Khmelyauskas Alexander Eduardovich <mardimusa8@gmail.com>",
+    "framework": "ubuntu-sdk-20.04.1"
+}

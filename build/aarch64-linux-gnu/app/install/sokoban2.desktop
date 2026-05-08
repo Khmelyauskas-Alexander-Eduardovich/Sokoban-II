@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=Sokoban II
+Name[ru]=Сокобан II
+Name[ca]=Socoban II
+Name[eu]=Sokobana II
+Name[nl]=Sokobantje II
+Name[tl]=Sakuban II
+Exec=%U Sokoban_II
+Icon=Assets/Icon.svg
+X-Lomiri-Splash-Image=Assets/Splash.svg
+X-Lomiri-Departament-ID=games
+Keywords=sokoban2;game;player;box;
+Terminal=false
+Type=Application
+X-Lomiri-Touch=true
+X-Lomiri-Splash-Color=#dc0e42
+
